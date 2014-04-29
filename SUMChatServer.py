@@ -70,8 +70,8 @@ class SUMServer(object):
 			self.exit(None, None)
 		return sctpseq
 	
-	def run(self):
-		self.connection_thread.run()
+	def start(self):
+		self.connection_thread.start()
 		self.msg_monitor()
 		
 	def connection_monitor(self):
@@ -79,13 +79,7 @@ class SUMServer(object):
 		self.sctpsock.listen(5)
 		inlist = [self.tcpsock]
 		while True:
-			try:
-				inrdy, __, __ = select.select(inlist, [], [])
-			except Exception as (code, msg):
-				if code != 4:
-					raise
-				else:
-					continue
+			inrdy, __, __ = select.select(inlist, [], [])
 			for s in inrdy:
 				if s == self.tcpsock:
 					self.handle_tcp()
@@ -105,12 +99,12 @@ class SUMServer(object):
 		if c_type == '0':
 			sock.send(self.mcastaddr + ' ' + str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
 			self.mlist.append((username, addr[0], addr[1]))
-		else:
+		elif c_type == '1':
 			sock.send(str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
-			if c_type == '1':
-				self.ulist.append((username, addr[0], addr[1]))
-			elif c_type == '2':
-				self.slist.append((username, addr[0], addr[1]))
+			self.ulist.append((username, addr[0], addr[1]))
+		elif c_type == '2':
+			sock.send(str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
+			self.slist.append((username, addr[0], addr[1]))
 		
 	def msg_monitor(self):
 		inlist = [self.udpsock, self.sctpsock]
@@ -223,7 +217,7 @@ def main(argv):
 		print "Wrong number of arguments, usage is:\n\tpython umserver.py <port>"
 		sys.exit(1)
 	server = SUMServer(argv[1])
-	server.run()	
+	server.start()	
 	
 if __name__ == '__main__':
 	main(sys.argv)
