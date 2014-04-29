@@ -79,7 +79,13 @@ class SUMServer(object):
 		self.sctpsock.listen(5)
 		inlist = [self.tcpsock]
 		while True:
-			inrdy, __, __ = select.select(inlist, [], [])
+			try:
+				inrdy, __, __ = select.select(inlist, [], [])
+			except Exception as (code, msg):
+				if code != 4:
+					raise
+				else:
+					continue
 			for s in inrdy:
 				if s == self.tcpsock:
 					self.handle_tcp()
