@@ -99,12 +99,12 @@ class SUMServer(object):
 		if c_type == '0':
 			sock.send(self.mcastaddr + ' ' + str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
 			self.mlist.append((username, addr[0], addr[1]))
-		elif c_type == '1':
+		else:
 			sock.send(str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
-			self.ulist.append((username, addr[0], addr[1]))
-		elif c_type == '2':
-			sock.send(str(self.mcastport) + ' ' + str(self.listpwd) + ' ' + str(self.exitpwd))
-			self.slist.append((username, addr[0], addr[1]))
+			if c_type == '1':
+				self.ulist.append((username, addr[0], addr[1]))
+			elif c_type == '2':
+				self.slist.append((username, addr[0], addr[1]))
 		
 	def msg_monitor(self):
 		inlist = [self.udpsock, self.sctpsock]
