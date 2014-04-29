@@ -3,7 +3,7 @@
 import errno, random, sctp, select, signal, socket, struct, sys
 from threading import Thread
 
-class UMServer(object):
+class SUMServer(object):
 	def __init__(self, port):
 		signal.signal(signal.SIGINT, self.print_clients)
 		signal.signal(signal.SIGQUIT, self.exit)
@@ -70,8 +70,8 @@ class UMServer(object):
 			self.exit(None, None)
 		return sctpseq
 	
-	def start(self):
-		self.connection_thread.start()
+	def run(self):
+		self.connection_thread.run()
 		self.msg_monitor()
 		
 	def connection_monitor(self):
@@ -216,8 +216,8 @@ def main(argv):
 	if len(argv) != 2:
 		print "Wrong number of arguments, usage is:\n\tpython umserver.py <port>"
 		sys.exit(1)
-	server = UMServer(argv[1])
-	server.start()	
+	server = SUMServer(argv[1])
+	server.run()	
 	
 if __name__ == '__main__':
 	main(sys.argv)

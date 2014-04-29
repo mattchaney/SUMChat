@@ -2,7 +2,7 @@
 
 import errno, sctp, signal, socket, sys, time, select, struct
 
-class UMClient(object):
+class SUMClient(object):
 	def __init__(self, host, port, strat_code):
 		# Set up signal handler
 		signal.signal(signal.SIGINT, self.request_list)
@@ -130,7 +130,7 @@ def main(argv):
 	if len(argv) != 4:
 		print "Usage is:\n\tpython umclient.py <host> <port> <s|u|m>"
 		sys.exit(1)
-	client = UMClient(argv[1], argv[2], argv[3])
+	client = SUMClient(argv[1], argv[2], argv[3])
 	client.run()
 	
 if __name__ == '__main__':
